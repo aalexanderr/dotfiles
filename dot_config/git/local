@@ -1,0 +1,10 @@
+[user]
+	email = amazuruk@proton.me
+	name = Alexander Mazuruk
+#  signingKey =
+
+#[commit]
+#  gpgsing = true
+
+#[push]
+#  gpgsign = if-asked
