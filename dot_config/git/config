@@ -9,6 +9,19 @@
   rb = rebase
   br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
   lg = log --graph --color --pretty=format:"%C(yellow)%H%C(green)%d%C(reset)%n%x20%cd%n%x20%cn%x20(%ce)%n%x20%s%n"
+  lgs = "!f() { \
+        git log --all --color --graph --pretty=format:'%C(bold yellow)<sig>%G?</sig>%C(reset) %C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(blue)<%an>%C(reset)' | \
+        sed \
+        -e 's#<sig>G</sig>#Good#' \
+        -e 's#<sig>B</sig>#\\nBAD \\nBAD \\nBAD \\nBAD \\nBAD#' \
+        -e 's#<sig>U</sig>#Unknown#' \
+        -e 's#<sig>X</sig>#Expired#' \
+        -e 's#<sig>Y</sig>#Expired Key#' \
+        -e 's#<sig>R</sig>#Revoked#' \
+        -e 's#<sig>E</sig>#Missing Key#' \
+        -e 's#<sig>N</sig>#None#' | \
+        less -r; \
+    }; f"
   # Get default branch name (copied from https://stackoverflow.com/a/67672350/14870317)
   defaultBranch = !git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4
   # Checkout to defaultBranch
@@ -28,7 +41,7 @@
   autocrlf = input
   # btw
   editor = nvim
-  # 
+  #
   pager = less
   # Speed up commands involving untracked files such as `git status`.
   # https://git-scm.com/docs/git-update-index#_untracked_cache
@@ -62,13 +75,13 @@
   tool = nvimdiff
 
 [difftool "nvimdiff"]
-  cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
+  cmd = 'nvim -d "$LOCAL" "$REMOTE"'
 
 [merge]
   tool = nvimdiff
 
 [mergetool "nvimdiff"]
-  cmd = nvim -d \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  cmd = 'nvim -d "$LOCAL" "$REMOTE" -ancestor "$BASE" -merge "$MERGED"'
 
 [init]
   # idk who thought master branch has slavery connotations but better safe than sorry

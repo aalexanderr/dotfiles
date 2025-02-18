@@ -1,10 +1,11 @@
 [user]
-  email = amazuruk@proton.me
+  email = aalexanderr@gmail.com
   name = Alexander Mazuruk
-#  signingKey =
+# TODO: handle different key ids for different machines
+  signingKey = DC87BE7F631E56BA
 
-#[commit]
-#  gpgsing = true
+[commit]
+  gpgsing = true
 
-#[push]
-#  gpgsign = if-asked
+[push]
+  gpgsign = if-asked
