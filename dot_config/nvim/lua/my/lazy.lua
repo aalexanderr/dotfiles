@@ -14,7 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({ { import = "my.plugins" }}, {
   install = {
-    colorscheme = { "rose-pine" },
+    colorscheme = { "solarized-osaka" },
   },
   checker = {
     enabled = true,
@@ -22,5 +22,8 @@ require("lazy").setup({ { import = "my.plugins" }}, {
   },
   change_detection = {
     notify = false,
+  },
+  rocks = {
+    enabled = false,
   },
 })
