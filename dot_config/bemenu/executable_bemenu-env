@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+export BEMENU_BACKEND="wayland"
+
+#--color=fg:#7f7094,bg:-1,hl:#b9b1bc
+#--color=fg+:#00986c,bg+:#241b30,hl+:#0ae4a4
+#--color=info:#aa54f9,prompt:#0ae4a4,pointer:#241b30
+#--color=marker:#ff00f6,spinner:#aa54f9,header:#f9f972
+
+blk02="#241b30e5"
+wht="#f2f2e3"
+
+export BEMENU_OPTS="--no-overlap --ignorecase \
+ --tb $blk02 \
+ --tf $wht \
+ --fb $blk02 \
+ --ff $wht \
+ --cb $blk02 \
+ --cf $wht \
+ --nb $blk02 \
+ --nf '#6272a4'\
+ --fbb $blk02 \
+ --fbf $wht \
+ --ab $blk02 \
+ --af '#6272a4' \
+ --hb  $blk02 \
+ --hf '#50fa7b'\
+ --sb $blk02 \
+ --sf '#50fa7b' \
+ --scb $blk02 \
+ --scf '#aa54f9' "

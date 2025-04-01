@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+~/.config/bemenu/bemenu-run-wrapper --scrollbar always --list 20 --prompt 'Run:' --no-exec | xargs -r swaymsg exec --
+
