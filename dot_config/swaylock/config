@@ -1,7 +1,10 @@
+daemonize
+
 ignore-empty-password
 show-failed-attempts
-image=$HOME/.config/swaylock/lock.jpg
-daemonize
+
+image=$HOME/.local/share/lock.jpg
+scale=center
 
 clock
 timestr=%R
@@ -14,15 +17,15 @@ indicator-caps-lock
 font-size=20
 
 indicator
-indicator-radius=100
-indicator-thickness=20
+indicator-radius=400
+indicator-thickness=40
 indicator-caps-lock
 
 key-hl-color=880033
 
 separator-color=00000000
 
-inside-color=00000099
+inside-color=00000000
 inside-clear-color=ffd20400
 inside-caps-lock-color=009ddc00
 inside-ver-color=d9d8d800
