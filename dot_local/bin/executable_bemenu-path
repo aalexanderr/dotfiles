@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+#~/.config/bemenu/bemenu-run-wrapper --scrollbar always --list 20 --prompt 'Run:' --no-exec | xargs -r hyprctl dispatch exec --
+
+script_path=$(dirname "$(readlink -f "$0")")
+
+if [ -n "$SWAYSOCK" ]; then
+  "$script_path"/bemenu-run-wrapper --scrollbar always --list 20 --prompt 'Run:' --no-exec | xargs -r swaymsg exec --
+elif [ -n "$I3SOCK" ]; then
+  "$script_path"/bemenu-run-wrapper --scrollbar always --list 20 --prompt 'Run:' --no-exec | xargs -r i3-msg exec --
+fi

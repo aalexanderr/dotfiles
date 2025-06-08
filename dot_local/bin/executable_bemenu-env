@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+export LD_LIBRARY_PATH="/usr/local/lib"
+if [[ -n "$SWAYSOCK" ]]; then
+  export BEMENU_BACKEND="wayland"
+elif [[ -n "$I3SOCK" ]]; then
+  export BEMENU_BACKEND="x11"
+  export BEMENU_RENDERER="/usr/local/lib/bemenu/bemenu-renderer-x11.so"
+fi
+
+# Mocha
+export BEMENU_OPTS='
+--no-overlap --ignorecase
+--f "DejaVu Sans Mono 28"
+--fb "#1e1e2ee0"
+--ff "#cdd6f4"
+--nb "#1e1e2ee0"
+--nf "#cdd6f4"
+--tb "#1e1e2ee0"
+--hb "#1e1e2ee0"
+--tf "#f38ba8"
+--hf "#f9e2af"
+--af "#cdd6f4"
+--ab "#1e1e2ee0"
+'

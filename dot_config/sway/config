@@ -74,9 +74,9 @@ set $ws10 "10"
 set $term kitty
 set $term-alt footclient
 # application launcher
-set $menu ~/.config/bemenu/bemenu-path
-set $desktop ~/.config/bemenu/bemenu-desktop
-set $power ~/.config/bemenu/bemenu-power
+set $menu ~/.local/bin/bemenu-path
+set $desktop ~/.local/bin/bemenu-desktop
+set $power ~/.local/bin/bemenu-power
 
 set $lockcmd swaylock
 

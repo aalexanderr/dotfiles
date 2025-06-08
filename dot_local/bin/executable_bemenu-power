@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+options="Lock\nLogout\nShutdown\nRestart\nSleep\nHibernate"
+
+script_path=$(dirname "$(readlink -f "$0")")
+
+case "$(echo -e $options |
+  "$script_path"/bemenu-wrapper --list 10 \
+    --prompt 'Select:')" in
+Shutdown) exec systemctl poweroff ;;
+Restart) exec systemctl reboot ;;
+Logout)
+  [ -n "$SWAYSOCK" ] && exec sway exit
+  [ -n "$I3SOCK" ] && exec i3-msg exit
+  ;;
+Suspend) exec systemctl suspend ;;
+Hibernate) exec systemctl suspend-then-hibernate ;;
+Lock)
+  [ -n "$SWAYSOCK" ] && exec swaylock
+  [ -n "$I3SOCK" ] && exec i3lock-run
+  ;;
+  #exec systemctl --user start lock.target;;
+esac
