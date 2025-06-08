@@ -1,0 +1,37 @@
+#!/bin/sh
+
+i3lock \
+  --nofork \
+  --ignore-empty-password \
+  --show-failed-attempts \
+  --image="~/.local/share/lock.jpg" \
+  --pass-media \
+  --scale \
+  --clock \
+  --time-str="%H:%M" \
+  --date-str="%A, %d-%m-%Y" \
+  --indicator \
+  --ring-width=20 \
+  --blur=5 \
+  --radius=180 \
+  --time-size=50 \
+  --date-size=35 \
+  --verif-size=40 \
+  --wrong-size=40 \
+  --greeter-size=40 \
+  --keylayout 1 \
+  --time-color=cdd6f4 \
+  --date-color=cdd6f4 \
+  --layout-color=cdd6f4 \
+  --greeter-color=cdd6f4 \
+  --verif-color=74c7ece0 \
+  --wrong-color=cdd6f4 \
+  --modif-color=cdd6f4 \
+  --keyhl-color=f2cdcd \
+  --bshl-color=f5e0dc \
+  --ring-color=a6e3a1e0 \
+  --inside-color=45475ac0 \
+  --insidewrong-color=f38ba8 \
+  --insidever-color=74c7ece0 \
+  --ringver-color=74c7ece0 \
+  --date-pos="tx:ty+40"
