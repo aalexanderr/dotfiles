@@ -1,0 +1,225 @@
+# TODO: rebuild with debug and check why battery module cant display power usage
+# scroll issue - doesnt respect libinput settings
+# wireguard / opnvpn support for vpn module
+
+icons_format = "{icon}"
+# this also reverts scrolling via mouse with sway (TODO: test with i3)
+invert_scrolling = true
+
+[theme]
+theme = "my-ctp-mocha.toml"
+
+[icons]
+icons = "awesome6"
+[icons.overrides]
+cpu = "\uf2db" #  fa-microchip
+memory_mem = "\uf538"
+memory_swap = "\uf0a0"
+net_wired = "\uf796" #  fa-ethernet
+airplane = "\uf072" #  fa-plane
+#"", "", "", "", "", "", "", "", ""
+laptop = "\uf109"
+car_battery = "\uf5df"
+eye="\uf06e"
+eye_slash="\uf070"
+gpu="\uf11b"
+#toggle_on="\uf06e"
+#toggle_off="\uf070"
+backlight= [
+    "\ue3d5",
+    "\ue3d3",
+    "\ue3d1",
+    "\ue3cf",
+    "\ue3ce",
+    "\ue3cd",
+    "\ue3ca",
+    "\ue3c8",
+    "\ue39b"
+]
+
+[[block]]
+block = "net"
+device = "wl*"
+interval = 2
+format = "{$icon} "
+format_alt = "{$icon} {$ssid}{$frequency}{$signal_strength} {$ip} {$ipv6}"
+#^icon_net_up {$speed_up.eng(prefix:K)} ^icon_net_down $speed_down.eng(prefix:K)
+inactive_format = "^icon_airplane "
+missing_format = ""
+
+[[block]]
+block = "net"
+#device = "enp*"
+device = "eth*"
+format = " $icon"
+format_alt = " $icon $device $ip $ipv6 ^icon_net_up $speed_up.eng(prefix:K) ^icon_net_down $speed_down.eng(prefix:K)"
+inactive_format = "^icon_airplane "
+missing_format = ""
+
+[[block]]
+block = "sound"
+driver = "auto"
+format = "$icon {$volume.eng(w:2)|}"
+max_vol = 100
+step_width = 5
+headphones_indicator = true
+device_kind = "sink"
+[[block.click]]
+button = "left"
+cmd = "wpctl set-mute @DEFAULT_SINK@ toggle"
+#cmd = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+
+[[block]]
+block = "sound"
+driver = "auto"
+format = "$icon {$volume.eng(w:2)|}"
+max_vol = 100
+step_width = 5
+device_kind = "source"
+[[block.click]]
+button = "left"
+cmd = "wpctl set-mute @DEFAULT_SOURCE@ toggle"
+#cmd = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+
+[[block]]
+block="toggle"
+format = "{$icon}"
+command_state='"$XDG_CONFIG_HOME"/i3status-rs/inhibitor-lock test'
+command_on='"$XDG_CONFIG_HOME"/i3status-rs/inhibitor-lock lock'
+command_off='"$XDG_CONFIG_HOME"/i3status-rs/inhibitor-lock unlock'
+#interval = 1
+icon_on="eye"
+icon_off="eye_slash"
+#state_on="good"
+#state_off="critical"
+
+# T480 & Dell
+[[block]]
+block= "backlight"
+device = "intel_backlight"
+step_width = 5
+minimum = 5
+maximum = 100
+cycle = [100,75,50,25,5]
+format = "$icon "
+#format = "$icon {$brightness.eng(w:2)}"
+missing_format = ""
+
+# Dell
+[[block]]
+block = "battery"
+model = "DELL V042N51J"
+driver = "sysfs"
+interval = 10
+format = "{$icon} {$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+charging_format = "{$icon} {$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+not_charging_format = "{$icon} {$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+full_format = "{$icon} "
+empty_format = "{$icon} "
+missing_format = ""
+#full_threshold = 95
+warning = 45
+critical = 15
+empty_threshold = 7.5
+
+# T480
+[[block]]
+block = "battery"
+model = "01AV421"
+driver = "sysfs"
+interval = 10
+format = "^icon_laptop {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+charging_format = "^icon_laptop {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+not_charging_format = "^icon_laptop {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+full_format = "^icon_laptop {$icon}"
+empty_format = "^icon_laptop {$icon}"
+missing_format = ""
+full_threshold = 95
+warning = 45
+critical = 15
+empty_threshold = 7.5
+
+# T480
+[[block]]
+block = "battery"
+driver = "sysfs"
+model = "01AV424"
+interval = 10
+format = "^icon_car_battery {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+charging_format = "^icon_car_battery {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+not_charging_format = "^icon_car_battery  {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+full_format = "^icon_car_battery {$icon}"
+empty_format = "^icon_car_battery {$icon}"
+missing_format = ""
+warning = 45
+critical = 15
+empty_threshold = 7.5
+
+[[block]]
+block = "cpu"
+info_cpu = 20
+warning_cpu = 50
+critical_cpu = 90
+merge_with_next = true
+format = "{$icon} "
+format_alt = "{$icon} {$barchart}{$frequency.eng(w:2,p:M)}"
+
+[[block]]
+block = "temperature"
+interval = 1
+scale = "celsius"
+good = 30
+idle= 45
+info = 60
+warning = 80
+chip = "coretemp-isa-*"
+format = "{$icon}"
+format_alt = "{$icon}{$average}"
+
+[[block]]
+block = "memory"
+format = "$icon"
+format_alt = "$icon{$mem_used_percents.eng(w:2)}^icon_memory_swap{$swap_used_percents.eng(w:2)}"
+
+#[[block]]
+#block = "nvidia_gpu"
+#interval = 1
+#format = "$icon   $utilization $temperature $clocks"
+
+[[block]]
+block = "disk_space"
+path = "/"
+info_type = "available"
+alert_unit = "GiB"
+interval = 60 # sec
+warning = 50.0
+alert = 30.0
+format = "$icon "
+format_alt = "$icon $used.eng(w:2, p:Gi)/$total.eng(w:2, p:Gi)"
+merge_with_next = true
+
+[[block]]
+block = "temperature"
+interval = 1
+scale = "celsius"
+good = 30
+idle= 45
+info = 60
+warning = 80
+chip = "nvme-pci-*"
+format = "{$icon}"
+format_alt = "{$icon}{$average}"
+
+[[block]]
+block = "time"
+interval = 600
+[block.format]
+short = "^icon_calendar"
+full = "^icon_calendar {$timestamp.datetime(f:'%a %d/%m')}"
+
+[[block]]
+block = "time"
+interval = 5
+[block.format]
+short = "$icon"
+full = "$icon {$timestamp.datetime(f:'%R')}"
