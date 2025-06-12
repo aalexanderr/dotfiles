@@ -4,3 +4,9 @@
   refreshPeriod = "168h"
   [".config/tmux/plugins/tpm" .pull]
     args = ["--depth=1 --single-branch --branch=master --ff-only"]
+[".config/nvim"]
+  type = "git-repo"
+  url = "https://github.com/aalexanderr/kickstart.nvim"
+  refreshPeriod = "168h"
+  [".config/nvim" .pull]
+    args = ["--depth=1 --single-branch --branch=master --ff-only"]
