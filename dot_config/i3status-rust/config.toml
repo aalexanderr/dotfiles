@@ -49,7 +49,14 @@ missing_format = ""
 
 [[block]]
 block = "net"
-#device = "enp*"
+device = "enp*"
+format = " $icon"
+format_alt = " $icon $device $ip $ipv6 ^icon_net_up $speed_up.eng(prefix:K) ^icon_net_down $speed_down.eng(prefix:K)"
+inactive_format = "^icon_airplane "
+missing_format = ""
+
+[[block]]
+block = "net"
 device = "eth*"
 format = " $icon"
 format_alt = " $icon $device $ip $ipv6 ^icon_net_up $speed_up.eng(prefix:K) ^icon_net_down $speed_down.eng(prefix:K)"
@@ -84,9 +91,9 @@ cmd = "wpctl set-mute @DEFAULT_SOURCE@ toggle"
 [[block]]
 block="toggle"
 format = "{$icon}"
-command_state='"$XDG_CONFIG_HOME"/i3status-rs/inhibitor-lock test'
-command_on='"$XDG_CONFIG_HOME"/i3status-rs/inhibitor-lock lock'
-command_off='"$XDG_CONFIG_HOME"/i3status-rs/inhibitor-lock unlock'
+command_state='~/.local/bin/inhibitor-lock test'
+command_on='~/.local/bin/inhibitor-lock lock'
+command_off='~/.local/bin/inhibitor-lock unlock'
 #interval = 1
 icon_on="eye"
 icon_off="eye_slash"
