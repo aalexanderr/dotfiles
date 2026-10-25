@@ -13,18 +13,21 @@ theme = "my-ctp-mocha.toml"
 icons = "awesome6"
 [icons.overrides]
 cpu = "\uf2db" #  fa-microchip
-memory_mem = "\uf538"
-memory_swap = "\uf0a0"
-net_wired = "\uf796" #  fa-ethernet
-airplane = "\uf072" #  fa-plane
+memory_mem = "\uf538"  #  fa-memory
+memory_swap = "\uf0a0"  #  fa-hard-drive
+net_wired = "\uf796" #   fa-ethernet
+airplane = "\uf072" #   fa-plane
+laptop = "\uf109"  #   fa-laptop
+car_battery = "\uf5df"  #  fa-car-battery
+eye="\uf06e"  #   fa-eye
+eye_slash="\uf070"  #   fa-eye-slash
+gpu="\uf11b"  #   fa-gamepad
+net_vpn = "\uf0ac"  #   fa-globe
+# net_vpn_off = "\uf05e"  #  fa-ban
+net_vpn_off = "\uf127"  #   fa-link-slash
+#toggle_on="\uf06e"  #   fa-eye
+#toggle_off="\uf070"  #   fa-eye-slash
 #"", "", "", "", "", "", "", "", ""
-laptop = "\uf109"
-car_battery = "\uf5df"
-eye="\uf06e"
-eye_slash="\uf070"
-gpu="\uf11b"
-#toggle_on="\uf06e"
-#toggle_off="\uf070"
 backlight= [
     "\ue3d5",
     "\ue3d3",
@@ -64,6 +67,35 @@ inactive_format = "^icon_airplane "
 missing_format = ""
 
 [[block]]
+block = "custom"
+# active airvpn* NetworkManager connection(s). net_vpn icon when up, net_vpn_off when down.
+# none -> Idle, exactly 1 -> Good (green), >1 -> Critical (red).
+# custom block has no format_alt, so left-click cycles compact <-> verbose:
+#   compact (default): icon only; names shown only when >1 are active (always red).
+#   verbose (clicked):  icon + name, or "none" when disconnected.
+json = true
+interval = 5
+format = "$icon$text"
+cycle = [
+'''
+conns=$(nmcli -t -f NAME connection show --active | grep "^airvpn")
+n=$(test -n "$conns" && echo "$conns" | wc -l || echo 0)
+names=$(echo "$conns" | sed 's/^airvpn-//' | paste -sd " ")
+if [ "$n" -eq 0 ]; then echo '{"icon":"net_vpn_off","text":"","state":"Idle"}';
+elif [ "$n" -eq 1 ]; then echo '{"icon":"net_vpn","text":"","state":"Good"}';
+else echo "{\"icon\":\"net_vpn\",\"text\":\" $names\",\"state\":\"Critical\"}"; fi
+''',
+'''
+conns=$(nmcli -t -f NAME connection show --active | grep "^airvpn")
+n=$(test -n "$conns" && echo "$conns" | wc -l || echo 0)
+names=$(echo "$conns" | sed 's/^airvpn-//' | paste -sd " ")
+if [ "$n" -eq 0 ]; then echo '{"icon":"net_vpn_off","text":" none","state":"Idle"}';
+elif [ "$n" -eq 1 ]; then echo "{\"icon\":\"net_vpn\",\"text\":\" $names\",\"state\":\"Good\"}";
+else echo "{\"icon\":\"net_vpn\",\"text\":\" $names\",\"state\":\"Critical\"}"; fi
+''',
+]
+
+[[block]]
 block = "sound"
 driver = "auto"
 format = "$icon {$volume.eng(w:2)|}"
@@ -97,8 +129,8 @@ command_off='~/.local/bin/inhibitor-lock unlock'
 #interval = 1
 icon_on="eye"
 icon_off="eye_slash"
-#state_on="good"
-#state_off="critical"
+state_on="critical"
+state_off="idle"
 
 # T480 & Dell
 [[block]]
@@ -135,11 +167,11 @@ block = "battery"
 model = "01AV421"
 driver = "sysfs"
 interval = 10
-format = "{^icon_laptop|^2} {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
-charging_format = "{^icon_laptop|^2} {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
-not_charging_format = "{^icon_laptop|^2} {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
-full_format = "{^icon_laptop|^2} {$icon}"
-empty_format = "{^icon_laptop|^2| {$icon}"
+format = "^icon_laptop {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+charging_format = "^icon_laptop {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+not_charging_format = "^icon_laptop {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+full_format = "^icon_laptop {$icon}"
+empty_format = "^icon_laptop {$icon}"
 missing_format = ""
 full_threshold = 95
 warning = 45
@@ -152,11 +184,11 @@ block = "battery"
 driver = "sysfs"
 model = "01AV424"
 interval = 10
-format = "{^icon_car_battery|^2} {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
-charging_format = "{^icon_car_battery|^2} {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
-not_charging_format = "{^icon_car_battery|^2}  {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
-full_format = "{^icon_car_battery|^2} {$icon}"
-empty_format = "{^icon_car_battery|^2} {$icon}"
+format = "^icon_car_battery {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+charging_format = "^icon_car_battery {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m)|}"
+not_charging_format = "^icon_car_battery  {$icon}{$percentage} {$time_remaining.dur(hms:true, min_unit:m) |}"
+full_format = "^icon_car_battery {$icon}"
+empty_format = "^icon_car_battery {$icon}"
 missing_format = ""
 warning = 45
 critical = 15
