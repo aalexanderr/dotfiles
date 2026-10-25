@@ -5,7 +5,9 @@ if [[ -n "$SWAYSOCK" ]]; then
   export BEMENU_BACKEND="wayland"
 elif [[ -n "$I3SOCK" ]]; then
   export BEMENU_BACKEND="x11"
+  {{- if eq .chezmoi.osRelease.id "gentoo" }}
   export BEMENU_RENDERER="/usr/local/lib/bemenu/bemenu-renderer-x11.so"
+  {{- end }}
 fi
 
 # Mocha
