@@ -102,7 +102,8 @@
   # always forgetting --set-upstream-to and rarely work with multiple remotes
   autoSetupRemote = true
   followTags = true
-  gpgsign = always
+  # github does not support, lol
+  #gpgSign = true
 
 [rebase]
   # update branches that are on top of rebased branch
