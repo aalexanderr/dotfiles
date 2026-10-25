@@ -3,12 +3,12 @@
   path = ~/.config/git/local
 
 [alias]
-  cp = cherry-pick
   ad = add
-  st = status
-  co = checkout
-  rb = rebase
   br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+  co = checkout
+  cp = cherry-pick
+  rb = rebase
+  st = status
   lg = log --graph --color --pretty=format:"%C(yellow)%H%C(green)%d%C(reset)%n%x20%cd%n%x20%cn%x20(%ce)%n%x20%s%n"
   lgs = "!f() { \
         git log --all --color --graph --pretty=format:'%C(bold yellow)<sig>%G?</sig>%C(reset) %C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(blue)<%an>%C(reset)' | \
@@ -24,7 +24,7 @@
         less -r; \
     }; f"
   # Get default branch name (copied from https://stackoverflow.com/a/67672350/14870317)
-  defaultBranch = !git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4
+  main-branch= !git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4
   # Checkout to defaultBranch
   com = "!f(){ git checkout $(git main-branch) $@;}; f"
   # autosquash notes: https://andrewlock.net/smoother-rebases-with-auto-squashing-git-commits/
@@ -36,13 +36,11 @@
   branches = branch -a
 
 [core]
-  # mixed indentation bad, space indentation ok, trailing whitespace bad (both EOL and EOF)
+  # mixed indentation bad, space>tab, trailing whitespace bad (both EOL and EOF)
   whitespace = space-before-tab,-indent-with-non-tab,trailing-space
-  # apparently useful when pulling code from windows?
+  # potentially useful when working with folks on windows?
   autocrlf = input
-  # btw
   editor = nvim
-  #
   pager = less
   # Speed up commands involving untracked files such as `git status`.
   # https://git-scm.com/docs/git-update-index#_untracked_cache
@@ -88,15 +86,23 @@
   # idk who thought master branch has slavery connotations but better safe than sorry
   defaultBranch = main
 
+[commit]
+  gpgsing = true
+
 [apply]
   # fix whitespace errors when applying patches
   whitespace = fix
 
+[pull]
+  ff = only
+  rebase = merges
+
 [push]
   default = current
-  #  always forgetting --set-upstream-to
+  # always forgetting --set-upstream-to and rarely work with multiple remotes
   autoSetupRemote = true
   followTags = true
+  gpgsign = always
 
 [rebase]
   # update branches that are on top of rebased branch

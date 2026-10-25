@@ -1,0 +1,11 @@
+# vim: set ft=gitconfig:
+[user]
+  name = Alexander Mazuruk
+  email = {{ .email }}
+
+[gpg]
+  format = ssh
+  signingKey = ~/.ssh/id_ed25519.pub
+
+[gpg "ssh"]
+  allowedSignersFile = ~/.config/git/allowedSigners

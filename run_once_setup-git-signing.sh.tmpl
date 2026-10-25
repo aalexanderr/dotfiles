@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+EMAIL="{{ .email }}"
+SSH_KEY="$HOME/.ssh/id_ed25519"
+ALLOWED_SIGNERS="$HOME/.config/git/allowedSigners"
+
+# Create SSH key interactively if it doesn't exist
+if [ ! -f "$SSH_KEY" ]; then
+    echo "No SSH key found at $SSH_KEY, generating..."
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    ssh-keygen -t ed25519 -C "$EMAIL" -f "$SSH_KEY"
+fi
+
+# Create allowedSigners file only if it doesn't exist
+if [ ! -f "$ALLOWED_SIGNERS" ]; then
+    mkdir -p "$(dirname "$ALLOWED_SIGNERS")"
+    echo "$EMAIL namespaces=\"git\" $(cat "${SSH_KEY}.pub")" > "$ALLOWED_SIGNERS"
+    echo "allowedSigners written to $ALLOWED_SIGNERS"
+fi
