@@ -78,7 +78,7 @@ set $menu ~/.local/bin/bemenu-path
 set $desktop ~/.local/bin/bemenu-desktop
 set $power ~/.local/bin/bemenu-power
 
-set $lockcmd ~/.local/bin/i3lock-wrapper
+set $lockcmd ~/.local/bin/i3lock-run
 
 set $psf $(xdg-user-dir PICTURES)/ps_$(date +"%Y%m%d%H%M%S").png
 
@@ -159,10 +159,11 @@ bindsym $sup+Shift+8 move container to workspace number $ws8
 bindsym $sup+Shift+9 move container to workspace number $ws9
 bindsym $sup+Shift+0 move container to workspace number $ws10
 # switching to non existent sworkspaces from gentoo wiki
-bindsym $sup+alt+$aleft          exec i3-msg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="left"  -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+alt+$aright         exec i3-msg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="right" -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+control+alt+$aleft  exec i3-msg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="container_left"  -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+control+alt+$aright exec i3-msg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="container_right" -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+alt+$aleft          exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="left"  -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+alt+$aright         exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="right" -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+control+alt+$aleft  exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="container_left"  -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+control+alt+$aright exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="container_right" -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+greater move workspace to output primary
 
 ### Layout stuff:
 #################
@@ -244,7 +245,7 @@ bar {
     font pango:"DejaVuSansM Nerd Font Mono, Font Awesome 6 Free"
 
     # status_command while date +'%Y-%m-%d %X'; do sleep 1; done
-    status_command "i3status-rs  ~/.config/i3status-rs/config.toml"
+    status_command i3status-rs
     separator_symbol " "
     colors {
         background         $base
@@ -261,38 +262,6 @@ bar {
     }
 }
 
-# floating
-for_window [app_id="firefox-esr" title="About Mozilla Firefox"] floating enable
-#for_window [app_id="firefox-esr" title="About"] floating enable
-#for_window [app_id="firefox-esr" title="Library"] floating enable, border pixel 1, sticky enable
-for_window [app_id="firefox-esr" title="Extension: "] floating enable, border pixel 1,
-
-# remove the sharing indicator windows
-#for_window [title = "Firefox - Sharing Indicator"] kill
-#for_window [title = "Firefox — Sharing Indicator"] kill
-
-for_window [window_role = "pop-up"] floating enable
-for_window [window_role = "bubble"] floating enable
-for_window [window_role = "dialog"] floating enable
-for_window [window_type = "dialog"] floating enable
-for_window [window_role = "task_dialog"] floating enable
-for_window [window_type = "menu"] floating enable
-for_window [title="(?:Open|Save) (?:File|Folder|As)"] floating enable, resize set width 1030 height 710
-for_window [app_id = "floating"] floating enable
-for_window [app_id = "floating_update"] floating enable, resize set width 1000px height 600px
-#for_window [class = "(?i)pinentry"] floating enable
-for_window [title = "Administrator privileges required"] floating enable
-
-for_window [class="^Steam$" title="^Friends$"] floating enable
-for_window [class="^Steam$" title="Steam - News"] floating enable
-for_window [class="^Steam$" title=".* - Chat"] floating enable
-for_window [class="^Steam$" title="^Settings$"] floating enable
-for_window [class="^Steam$" title=".* - event started"] floating enable
-for_window [class="^Steam$" title=".* CD key"] floating enable
-for_window [class="^Steam$" title="^Steam - Self Updater$"] floating enable
-for_window [class="^Steam$" title="^Screenshot Uploader$"] floating enable
-for_window [class="^Steam$" title="^Steam Guard - Computer Authorization Required$"] floating enable
-for_window [title="^Steam Keyboard$"] floating enable
 
 ################################################################################
 #                              I3 SPECIFIC CONFIG
@@ -302,15 +271,9 @@ for_window [title="^Steam Keyboard$"] floating enable
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex --autostart --environment i3
 
-# The combination of xss-lock, nm-applet and pactl is a popular choice, so
-
-
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
 exec --no-startup-id xss-lock --transfer-sleep-lock -- $lockcmd
-
-
-#exec --no-startup-id nm-applet
 
 exec_always --no-startup-id feh --bg-scale ~/.local/share/wall.jpg
 exec --no-startup-id picom -b --config ~/.config/picom/picom.conf
