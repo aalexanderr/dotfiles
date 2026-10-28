@@ -240,7 +240,7 @@ bar {
     position top
     {{ if eq .wm "i3" }}font pango:"DejaVuSansM Nerd Font Mono, Font Awesome 6 Free"{{ else if eq .wm "sway" }}font "DejaVu Sans Mono, Font Awesome 6 Free"{{ end }}
 
-    status_command i3status-rs
+    status_command i3status-rs{{ if eq .wm "i3" }} ~/.config/i3status-rust/config-i3.toml{{ end }}
     separator_symbol " "
     colors {
         background         $base

@@ -3,8 +3,7 @@
 # wireguard / opnvpn support for vpn module
 
 icons_format = "{icon}"
-# this also reverts scrolling via mouse with sway (TODO: test with i3)
-invert_scrolling = true
+{{ if eq .wm "sway" }}invert_scrolling = true{{ else if eq .wm "i3" }}#invert_scrolling = true{{ end }}
 
 [theme]
 theme = "my-ctp-mocha.toml"
