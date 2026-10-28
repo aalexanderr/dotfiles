@@ -78,7 +78,7 @@ set $menu ~/.local/bin/bemenu-path
 set $desktop ~/.local/bin/bemenu-desktop
 set $power ~/.local/bin/bemenu-power
 
-set $lockcmd ~/.local/bin/i3lock-run
+set $lockcmd ~/.local/bin/i3lock-wrapper
 
 set $psf $(xdg-user-dir PICTURES)/ps_$(date +"%Y%m%d%H%M%S").png
 
