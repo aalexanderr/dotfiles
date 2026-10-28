@@ -1,5 +1,3 @@
-{{ if eq .wm "i3" }}# https://i3wm.org/docs/userguide.html{{ else if eq .wm "sway" }}# `man 5 sway`{{ end }}
-#
 ### visual settings
 ###################
 #colors
@@ -78,11 +76,12 @@ set $menu ~/.local/bin/bemenu-path
 set $desktop ~/.local/bin/bemenu-desktop
 set $power ~/.local/bin/bemenu-power
 
+set $wmmsg {{ if eq .wm "i3" }}i3-msg{{ else if eq .wm "sway" }}swaymsg{{ end }}
 set $lockcmd {{ if eq .wm "i3" }}~/.local/bin/i3lock-wrapper{{ else if eq .wm "sway" }}swaylock{{ end }}
 
 set $psf $(xdg-user-dir PICTURES)/ps_$(date +"%Y%m%d%H%M%S").png
 
-set $refresh_i3status killall -SIGUSR1 {{ if eq .wm "i3" }}i3status{{ else if eq .wm "sway" }}i3status-rs{{ end }}
+set $refresh_i3status killall -SIGUSR1 i3status-rs
 
 {{ if eq .wm "i3" }}font pango:"DejaVuSansM Nerd Font Mono, Font Awesome 6 Free"{{ else if eq .wm "sway" }}font pango:DejaVu Sans Mono, Font Awesome 6 Free 10{{ end }}
 {{ if eq .wm "i3" }}#font "DejaVuSansM Nerd Font Mono, Font Awesome 6 Free"{{ else if eq .wm "sway" }}#font "DejaVu Sans Mono, Font Awesome 6 Free"{{ end }}
@@ -99,12 +98,10 @@ bindsym $sup+d exec --no-startup-id $menu
 bindsym $sup+Shift+d exec --no-startup-id $desktop
 bindsym $sup+p exec --no-startup-id $power
 # Use Mouse+$sup to drag floating windows to their wanted position
-# Despite the name, also works for non-floating windows.
-floating_modifier {{ if eq .wm "i3" }}$sup{{ else if eq .wm "sway" }}$sup normal{{ end }}
+floating_modifier $sup{{ if eq .wm "sway" }} normal{{ end }}
 # move tiling windows via drag & drop by left-clicking into the title bar,
 # or left-clicking anywhere into the window while holding the floating modifier.
 tiling_drag {{ if eq .wm "i3" }}modifier titlebar{{ else if eq .wm "sway" }}titlebar{{ end }}
-# i3-only:
 {{ if eq .wm "i3" }}bindsym $sup+Shift+r restart{{ else if eq .wm "sway" }}#bindsym $sup+Shift+r restart{{ end }}
 # Reload the configuration file
 bindsym $sup+Shift+c reload
@@ -159,14 +156,11 @@ bindsym $sup+Shift+8 move container to workspace number $ws8
 bindsym $sup+Shift+9 move container to workspace number $ws9
 bindsym $sup+Shift+0 move container to workspace number $ws10
 # switching to non existent sworkspaces from gentoo wiki
-{{ if eq .wm "i3" }}bindsym $sup+alt+$aleft          exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="left"  -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+alt+$aright         exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="right" -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+control+alt+$aleft  exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="container_left"  -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+control+alt+$aright exec i3-msg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="container_right" -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+greater move workspace to output primary{{ else if eq .wm "sway" }}bindsym $sup+alt+$aleft          exec swaymsg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="left"  -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+alt+$aright         exec swaymsg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="right" -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+control+alt+$aleft  exec swaymsg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="container_left"  -v num_of_workspaces=$num_of_workspaces
-bindsym $sup+control+alt+$aright exec swaymsg -pt get_workspaces | ~/.local/bin/workspace.gawk -v move_type="container_right" -v num_of_workspaces=$num_of_workspaces{{ end }}
+bindsym $sup+alt+$aleft          exec $wmmsg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="left"  -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+alt+$aright         exec $wmmsg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="right" -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+control+alt+$aleft  exec $wmmsg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="container_left"  -v num_of_workspaces=$num_of_workspaces
+bindsym $sup+control+alt+$aright exec $wmmsg -pt get_workspaces | gawk -f ~/.local/bin/workspace.gawk -v move_type="container_right" -v num_of_workspaces=$num_of_workspaces
+{{ if eq .wm "i3" }}bindsym $sup+greater move workspace to output primary{{ else if eq .wm "sway" }}{{ end }}
 
 ### Layout stuff:
 #################
@@ -247,9 +241,7 @@ bar {
     position top
     {{ if eq .wm "i3" }}font pango:"DejaVuSansM Nerd Font Mono, Font Awesome 6 Free"{{ else if eq .wm "sway" }}font "DejaVu Sans Mono, Font Awesome 6 Free"{{ end }}
 
-    # status_command while date +'%Y-%m-%d %X'; do sleep 1; done
-{{ if eq .wm "sway" }}    #status_command "i3status-rs ~/.config/i3status-rs/config.toml"
-{{ end }}    status_command i3status-rs
+    status_command i3status-rs
     separator_symbol " "
     colors {
         background         $base
@@ -279,8 +271,17 @@ exec --no-startup-id dex --autostart --environment i3
 # screen before suspend. Use loginctl lock-session to lock your screen.
 exec --no-startup-id xss-lock --transfer-sleep-lock -- $lockcmd
 
-exec_always --no-startup-id feh --bg-scale ~/.local/share/wall.jpg
+{{ if regexMatch "^alex-.*-pc$" .chezmoi.hostname -}}
+exec --no-startup-id xrandr --output DP-3 --left-of DP-1 --rotate left
+{{ end -}}
+exec_always --no-startup-id feh --{{ if regexMatch "^alex-.*-pc$" .chezmoi.hostname }}bg-fill{{ else }}bg-scale{{ end }} ~/.local/share/wall.jpg
 exec --no-startup-id picom -b --config ~/.config/picom/picom.conf
+{{- if eq .chezmoi.osRelease.id "arch" }}
+exec --no-startup-id dunst
+{{- end }}
+{{- if eq .chezmoi.osRelease.id "ubuntu" }}
+exec --no-startup-id nm-applet
+{{- end }}
 # enable tap to click
 exec --no-startup-id xinput --set-prop 'pointer:VEN_0488:00 0488:104B Touchpad' 343 1
 exec --no-startup-id xinput --set-prop 'pointer:VEN_0488:00 0488:104B Touchpad' 372 1
@@ -340,9 +341,8 @@ for_window [app_id="^.*"] inhibit_idle fullscreen
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 
-# TODO: us,pl when added to system
 input "type:keyboard" {
-    xkb_layout us
+    xkb_layout us,pl
     xkb_options grp:alt_shift_toggle
     # in ms
     # repeat_dealy 100
