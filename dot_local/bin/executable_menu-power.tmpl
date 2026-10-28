@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Power menu via bemenu.
+# $1 = WM IPC command (i3-msg / swaymsg), $2 = lock command, both from the config.
+export BEMENU_OPTS='{{ .bemenu_opts }}'
+
+options="Lock\nLogout\nSuspend\nHibernate\nRestart\nShutdown"
+case "$(printf '%b' "$options" | bemenu --list 10 --prompt 'Select:')" in
+Lock) exec "$2" ;;
+Logout) exec "$1" exit ;;
+Suspend) exec systemctl suspend ;;
+Hibernate) exec systemctl suspend-then-hibernate ;;
+Restart) exec systemctl reboot ;;
+Shutdown) exec systemctl poweroff ;;
+esac

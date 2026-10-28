@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Run launcher: pick any binary in $PATH via bemenu, exec it under the WM.
+# $1 is the WM IPC command (i3-msg / swaymsg), supplied by the config.
+export BEMENU_OPTS='{{ .bemenu_opts }}'
+
+bemenu-run --scrollbar always --list 20 --prompt 'Run:' --no-exec | xargs -r "$1" exec --

@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+"""Desktop-entry launcher via bemenu, for i3 and sway.
+
+Replaces the perl dmenu-desktop: scans the XDG application directories,
+offers the entries in bemenu, and execs the chosen one through the WM.
+"""
+import os
+import subprocess
+import sys
+from pathlib import Path
+from typing import NamedTuple
+
+os.environ["BEMENU_OPTS"] = r'''{{ .bemenu_opts }}'''
+
+# Exec field codes we drop, since we launch without files or URLs.
+FIELD_CODES = {"%f", "%F", "%u", "%U", "%d", "%D",
+               "%n", "%N", "%i", "%c", "%k", "%v", "%m"}
+
+
+class App(NamedTuple):
+    command: str
+    terminal: bool
+
+
+def application_dirs() -> list[Path]:
+    """`applications/` dirs per the XDG Base Directory spec.
+
+    https://specifications.freedesktop.org/basedir-spec/latest/
+    """
+    home = os.path.expanduser("~")
+    data_home = os.environ.get("XDG_DATA_HOME") or f"{home}/.local/share"
+    data_dirs = os.environ.get("XDG_DATA_DIRS") or "/usr/local/share:/usr/share"
+    return [Path(root, "applications") for root in [data_home, *data_dirs.split(":")]]
+
+
+def read_desktop_entry(path: Path) -> dict[str, str]:
+    """Parse the [Desktop Entry] group of a .desktop file."""
+    entry: dict[str, str] = {}
+    in_group = False
+    try:
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return entry
+    for line in lines:
+        if line.startswith("["):
+            if in_group:  # a later group starts; we only want [Desktop Entry]
+                break
+            in_group = line.strip() == "[Desktop Entry]"
+        elif in_group and "=" in line and not line.startswith("#"):
+            key, _, value = line.partition("=")
+            entry[key.strip()] = value.strip()
+    return entry
+
+
+def is_visible_application(entry: dict[str, str]) -> bool:
+    return (
+        entry.get("Type") == "Application"
+        and bool(entry.get("Exec"))
+        and entry.get("NoDisplay", "").lower() != "true"
+        and entry.get("Hidden", "").lower() != "true"
+    )
+
+
+def command_from_exec(exec_value: str) -> str:
+    tokens = [t for t in exec_value.split() if t not in FIELD_CODES]
+    return " ".join(tokens).replace("%%", "%")
+
+
+def discover_apps() -> dict[str, App]:
+    """Map display name -> App, honoring XDG directory precedence."""
+    apps: dict[str, App] = {}
+    seen_ids: set[str] = set()
+    for directory in application_dirs():
+        if not directory.is_dir():
+            continue
+        for path in sorted(directory.rglob("*.desktop")):
+            desktop_id = str(path.relative_to(directory))
+            if desktop_id in seen_ids:
+                continue
+            seen_ids.add(desktop_id)
+
+            entry = read_desktop_entry(path)
+            if not is_visible_application(entry):
+                continue
+
+            name = entry.get("Name") or path.stem
+            apps.setdefault(name, App(
+                command=command_from_exec(entry["Exec"]),
+                terminal=entry.get("Terminal", "").lower() == "true",
+            ))
+    return apps
+
+
+def prompt(names: list[str]) -> str:
+    result = subprocess.run(
+        ["bemenu", "--scrollbar", "always", "--list", "20", "--prompt", "Run:"],
+        input="\n".join(names), capture_output=True, text=True,
+    )
+    return result.stdout.strip()
+
+
+def launch(app: App, wm_ipc: str) -> None:
+    command = f"$TERMINAL -e {app.command}" if app.terminal else app.command
+    subprocess.Popen([wm_ipc, "exec", "--", command])
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        sys.exit("usage: menu-desktop <wm-ipc-command>")
+    wm_ipc = sys.argv[1]
+    apps = discover_apps()
+    selection = prompt(sorted(apps))
+    if not selection:
+        return 0
+    # Run literal input if it is not one of the known application names.
+    launch(apps.get(selection, App(selection, terminal=False)), wm_ipc)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -71,13 +71,12 @@ set $ws10 "10"
 
 set $term kitty
 set $term-alt {{ if eq .wm "i3" }}i3-sensible-terminal{{ else if eq .wm "sway" }}footclient{{ end }}
-# application launcher
-set $menu ~/.local/bin/bemenu-path
-set $desktop ~/.local/bin/bemenu-desktop
-set $power ~/.local/bin/bemenu-power
-
 set $wmmsg {{ if eq .wm "i3" }}i3-msg{{ else if eq .wm "sway" }}swaymsg{{ end }}
 set $lockcmd {{ if eq .wm "i3" }}~/.local/bin/i3lock-wrapper{{ else if eq .wm "sway" }}swaylock{{ end }}
+# application launcher
+set $menu ~/.local/bin/menu-run $wmmsg
+set $desktop ~/.local/bin/menu-desktop $wmmsg
+set $power ~/.local/bin/menu-power $wmmsg $lockcmd
 
 set $psf $(xdg-user-dir PICTURES)/ps_$(date +"%Y%m%d%H%M%S").png
 
