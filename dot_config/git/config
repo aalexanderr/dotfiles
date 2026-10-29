@@ -87,7 +87,7 @@
   defaultBranch = main
 
 [commit]
-  gpgsing = true
+  gpgSign = true
 
 [apply]
   # fix whitespace errors when applying patches
